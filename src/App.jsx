@@ -5,6 +5,7 @@ const App = () => {
   const api_url_username = 'https://playground.4geeks.com/todo/users/pancho'; //Modificar el nombre de usuario con el valor del usuario que crearon
   const [username, setUsername] = useState('');
   const [usertodos, setUserTodos] = useState({});
+  const [flagerror, setFlagError] = useState(false);
 
   useEffect(() => {
     getListTodos();
@@ -17,8 +18,11 @@ const App = () => {
       const data = await response.json();
       setUsername(data.name);
       setUserTodos(data.todos);
+      console.log(data);
     } else {
       console.log('Error: ', response.status, response.statusText);
+      setFlagError(true);
+      console(flagerror);
       return {error: {status: response.status, statusText: response.statusText}};
     };
   };
@@ -28,7 +32,15 @@ const App = () => {
       <header className='header'>
         <h1>Todo List</h1>
       </header>
-
+      {flagerror ? 
+      <section className='error-notice'>
+        <div class="oaerror danger">
+          <strong>Error:</strong> Ha ocurrido un error en la carga del listado de tareas
+        </div>
+        
+      </section>
+      :
+      <>
       <section className='todo-input-section'>
         <div className='todo-input-wrapper'>
           <input type='text' id='todo-input' placeholder='Escribe la tarea' />
@@ -51,6 +63,8 @@ const App = () => {
           <div className="dots"></div>
         }
       </section>
+      </>
+      }
     </main>
   );
 }
