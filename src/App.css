@@ -138,3 +138,7 @@ button {
 .danger strong {
   color: #d9534f;
 }
+
+.is-done {
+	text-decoration: line-through;
+}

@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 const App = () => {
-  const api_url_username = 'https://playground.4geeks.com/todo/users/pancho'; //Modificar el nombre de usuario con el valor del usuario que crearon
+  const api_url_username = 'https://playground.4geeks.com/todo/users/ACA_SU_USUARIO'; //Modificar el nombre de usuario con el valor del usuario que crearon
+  const api_url_todos = 'https://playground.4geeks.com/todo/todos/';
   const [username, setUsername] = useState('');
   const [usertodos, setUserTodos] = useState({});
   const [flagerror, setFlagError] = useState(false);
@@ -22,9 +23,33 @@ const App = () => {
     } else {
       console.log('Error: ', response.status, response.statusText);
       setFlagError(true);
-      console(flagerror);
       return {error: {status: response.status, statusText: response.statusText}};
     };
+  };
+
+  const updateTodo = async (id, label, is_done) => {
+    let data = {
+                'label': label,
+                'is_done': is_done
+    };
+
+    const response = await fetch(api_url_todos + id, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    //Acá el código que actualiza el state usertodos
+  };
+
+  const deleteTodo = async (id) => {
+    const response = await fetch(api_url_todos + id, {
+      method: 'DELETE'
+    });
+
+    //Acá el código que actualiza el state usertodos
   };
 
   return (
@@ -53,9 +78,19 @@ const App = () => {
           <ul id='todo-list'>
             {usertodos.map((todo) => 
               <li className='todo-item' key={todo.id}>
-                <span className='task-text'>{todo.label}</span>
-                <button className='complete-button'>Marcar como hecha</button>
-                <button className='delete-button'>Eliminar</button>
+                {
+                  !todo.is_done ? 
+                  <>
+                  <span className='task-text'>{todo.label}</span>
+                  <button className='complete-button' onClick={() => { updateTodo(todo.id, todo.label, true) }}>Marcar como hecha</button>
+                  </>
+                  :
+                  <>
+                  <span className='task-text is-done'>{todo.label}</span>
+                  <button className='complete-button' onClick={() => { updateTodo(todo.id, todo.label, false) }}>Marcar como no hecha</button>
+                  </>
+                }
+                <button className='delete-button' onClick={ () => { deleteTodo(todo.id) } }>Eliminar</button>
               </li>
             )}
           </ul>
